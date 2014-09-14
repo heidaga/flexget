@@ -1,0 +1,52 @@
+    templates:
+      INPUT_SERIES:
+        inputs:
+          - rss: http://ezrss.it/feed/ 
+          - rss: http://showrss.info/rss.php?user_id=192791&hd=1&proper=null&raw=true
+      GENERAL_FILTER_A:
+        exists_series:
+          - /media/usb0/TV Shows/
+          - /media/usb0/Downloads/incomplete
+      GENERAL_FILTER_B:
+        content_filter:
+          reject:
+            - '*.rar'
+            - '*.zip'
+            - '*.avi'
+      OUTPUT_SERIES:
+        transmission:
+          host: localhost
+          port: 9091
+          username: CHANGE_ME
+          password: CHANGE_ME
+          path: /media/usb0/TV Shows/{{series_name|pathscrub}}/S{{"%02d"|format(series_season)}}
+    tasks:
+      FILTER_SERIES_NEW:
+        priority: 2
+        series:
+          settings:
+            MY_GROUP:
+              quality: hdtv <720p
+          MY_GROUP:
+            - Homeland
+            - House Of Cards
+            - Running Wild with Bear Grylls
+            #(only for test)
+            - Secret Knowledge
+        template: 
+          - INPUT_SERIES
+          - GENERAL_FILTER_A
+          - GENERAL_FILTER_B
+          - OUTPUT_SERIES
+      FILTER_SERIES_OLD:
+        priority: 1
+        inputs:
+          - rss: http://showrss.info/feeds/561.rss
+        series:
+          - Da Vinci's Demons:
+              begin: S02E06
+              quality: <720p
+        template: 
+          - INPUT_SERIES
+          - GENERAL_FILTER_B
+          - OUTPUT_SERIES
